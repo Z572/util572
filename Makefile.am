@@ -63,9 +63,7 @@ AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)"
 
 # info_TEXINFOS = doc/guile-rime.texi
 
-EXTRA_DIST += README.org \
-              README \
-              HACKING \
+EXTRA_DIST += README \
               COPYING \
               guix.scm \
               .gitignore \

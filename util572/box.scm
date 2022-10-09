@@ -1,3 +1,5 @@
+;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
+
 (define-module (util572 box)
   #:use-module (ice-9 format)
   #:use-module (oop goops)

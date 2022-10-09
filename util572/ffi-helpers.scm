@@ -1,3 +1,4 @@
+;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
 (define-module (util572 ffi-helpers)
   #:export-syntax (define-make-ffi-procedure))
 (define-syntax define-make-ffi-procedure

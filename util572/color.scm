@@ -1,3 +1,4 @@
+;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
 (define-module (util572 color)
   #:use-module (util572 string)
   #:use-module (srfi srfi-26)

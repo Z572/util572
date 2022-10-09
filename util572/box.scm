@@ -17,7 +17,7 @@
        (= (box-width box) (box-width box2))
        (= (box-height box) (box-height box2))))
 
-(define-method (wirte (box <box>) port)
+(define-method (write (box <box>) port)
   (format port "<~a ~x x:~a y:~a width:~a height:~a>"
           (class-name (class-of box))
           (object-address box)

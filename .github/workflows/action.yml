@@ -1,0 +1,34 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Guix
+      uses: PromyLOPh/guix-install-action@v1
+    - name: guix shell
+      run: guix shell -D --file=./guix.scm
+
+    - name: bootstrap
+      run: ./bootstrap
+
+    - name: configure
+      run: ./configure
+      
+    - name: Install dependencies
+      run: make -j
+      
+    - name: Run check
+      run: make check -j
+      
+    - name: Run distcheck
+      run: make distcheck -j

@@ -5,7 +5,7 @@
   #:use-module (ice-9 format)
   #:use-module (oop goops)
   #:use-module (system foreign)
-  #:export (make-rgba-color))
+  #:export (make-rgba-color <rgba-color>))
 
 (define-class <color> ())
 (define-class <rgba-color> (<color>)

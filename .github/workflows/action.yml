@@ -15,7 +15,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: install packages
       run: sudo apt-get install -y guile-3.0-dev
-
+    - name: setenv
+      run: export LANG=C.UTF-8 TERM=dumb VERBOSE=true GUILE_AUTO_COMPILE=0
     - name: bootstrap
       run: ./bootstrap
 

@@ -1,4 +1,5 @@
 (define-module (util572 box)
+  #:use-module (ice-9 format)
   #:use-module (oop goops)
   #:export (<box> box-x box-y box-width box-height))
 
@@ -13,3 +14,12 @@
        (= (box-y box) (box-y box2))
        (= (box-width box) (box-width box2))
        (= (box-height box) (box-height box2))))
+
+(define-method (wirte (box <box>) port)
+  (format port "<~a ~x x:~a y:~a width:~a height:~a>"
+          (class-name (class-of box))
+          (object-address box)
+          (box-x box)
+          (box-y box)
+          (box-width box)
+          (box-height box)))

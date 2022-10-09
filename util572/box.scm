@@ -7,3 +7,9 @@
   (y #:init-value 0 #:init-keyword #:y #:accessor box-y)
   (width #:init-value 0 #:init-keyword #:width #:accessor box-width)
   (height #:init-value 0 #:init-keyword #:height #:accessor box-height))
+
+(define-method (equal? (box <box>) (box2 <box>))
+  (and (= (box-x box) (box-x box2))
+       (= (box-y box) (box-y box2))
+       (= (box-width box) (box-width box2))
+       (= (box-height box) (box-height box2))))

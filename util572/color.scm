@@ -6,7 +6,9 @@
   #:use-module (ice-9 format)
   #:use-module (oop goops)
   #:use-module (system foreign)
-  #:export (make-rgba-color <rgba-color>))
+  #:export (make-rgba-color
+            <rgba-color>
+            color->list))
 
 (define-class <color> ())
 (define-class <rgba-color> (<color>)
@@ -36,6 +38,12 @@
                            (string-split-length s 1))))
           (else (color-error color))))
       (color-error color)))
+
+(define-method (color->list (color <rgba-color>))
+  (list (color-r color)
+        (color-g color)
+        (color-b color)
+        (color-a color)))
 
 (define-method (write (color <rgba-color>) port)
   (format port "<~a ~x r: ~a g: ~a b: ~a a: ~a>"

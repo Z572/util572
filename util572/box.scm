@@ -1,9 +1,15 @@
 ;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
 
 (define-module (util572 box)
+  #:use-module (srfi srfi-1)
   #:use-module (ice-9 format)
   #:use-module (oop goops)
-  #:export (<box> box-x box-y box-width box-height))
+  #:export (<box>
+            box-x
+            box-y
+            box-width
+            box-height
+            box-empty?))
 
 (define-class <box> ()
   (x #:init-value 0 #:init-keyword #:x #:accessor box-x)
@@ -25,3 +31,6 @@
           (box-y box)
           (box-width box)
           (box-height box)))
+
+(define-method (box-empty? (box <box>))
+  (any zero? (list (box-width box) (box-height box))))

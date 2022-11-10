@@ -8,7 +8,11 @@
   #:use-module (system foreign)
   #:export (make-rgba-color
             <rgba-color>
-            color->list))
+            color->list
+            color-r
+            color-g
+            color-b
+            color-a))
 
 (define-class <color> ())
 (define-class <rgba-color> (<color>)

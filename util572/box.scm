@@ -9,7 +9,9 @@
             box-y
             box-width
             box-height
-            box-empty?))
+            box-empty?
+            split-box
+            split-box/n))
 
 (define-class <box> ()
   (x #:init-value 0 #:init-keyword #:x #:accessor box-x)
@@ -50,3 +52,51 @@
 
 (define-method (box-empty? (box <box>))
   (any zero? (list (box-width box) (box-height box))))
+
+(define-method (split-box (box <box>) (n <number>) (x-or-y <symbol>))
+  (define first-box (shallow-clone box))
+  (define last-box (shallow-clone box))
+  (case x-or-y
+    ((x)
+;;;  _____       _____
+;;; |     |     |     |
+;;; |     | => -+-----+-
+;;; |     |     |     |
+;;;  -----       -----
+     (unless (<= n (box-height box))
+       (error "n must <= (box-height box)"))
+     (set! (box-height first-box) n)
+
+     (set! (box-y last-box) (+ (box-y box) n))
+     (set! (box-height last-box) (- (box-height box) n)))
+    ((y)
+;;;  _____      __|__
+;;; |     |    |  |  |
+;;; |     | => |  |  |
+;;; |     |    |  |  |
+;;;  -----      --|--
+     (unless (<= n (box-width box))
+       (error "n must <= (box-width box)"))
+     (set! (box-width first-box) n)
+
+     (set! (box-x last-box) (+ n (box-x box)))
+     (set! (box-width last-box) (- (box-width box) n)))
+    (else (error "X-OR-Y arg must 'x or 'y")))
+  (list first-box last-box))
+
+(define-method (split-box/n (box <box>) (n <number>) (x-or-y <symbol>))
+  (define is-x? (eq? x-or-y 'x))
+  (define get-w (if is-x? box-height box-width))
+  (let loop ((nx (get-w box))
+             (box box)
+             (boxs '()))
+    (if (<= (* 2 n) nx) ;; make sure last box don't too small.
+        (let ((o (split-box box n x-or-y)))
+          (loop (get-w (second o))
+                (second o)
+                (cons (first o) boxs)))
+        (reverse (cons box boxs)))))
+
+;; (define-method (split-box/fraction (box <box>) (n <fraction>) (x-or-y <symbol>))
+;;   (define is-x? (eq? x-or-y 'x))
+;;   (split-box box (round (* n ((if is-x? box-height box-width) box))) x-or-y))

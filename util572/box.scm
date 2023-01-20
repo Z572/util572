@@ -17,6 +17,22 @@
   (width #:init-value 0 #:init-keyword #:width #:accessor box-width)
   (height #:init-value 0 #:init-keyword #:height #:accessor box-height))
 
+(define-method (initialize (object <box>) initargs)
+  (let ((o (next-method)))
+    (when (or (< (box-width o) 0)
+              (< (box-height o) 0))
+      (error "<box>' width and height must >= 0"))))
+
+(define-method ((setter box-width) (box <box>) (i <integer>))
+  (if (< i 0)
+      (error "<box>' width must >= 0" i (current-source-location))
+      (next-method)))
+
+(define-method ((setter box-height) (box <box>) (i <integer>))
+  (if (< i 0)
+      (error "<box>' height must >= 0")
+      (next-method)))
+
 (define-method (equal? (box <box>) (box2 <box>))
   (and (= (box-x box) (box-x box2))
        (= (box-y box) (box-y box2))

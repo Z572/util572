@@ -1,8 +1,9 @@
-;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
+;;; Copyright (C) 2022,2023 Zheng Junjie <873216071@qq.com>
 
 (define-module (util572 box)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 format)
+  #:use-module (srfi srfi-26)
   #:use-module (oop goops)
   #:export (<box>
             box-x
@@ -51,7 +52,7 @@
           (box-height box)))
 
 (define-method (box-empty? (box <box>))
-  (any zero? (list (box-width box) (box-height box))))
+  (any (cut <= <> 0) (list (box-width box) (box-height box))))
 
 (define-method (split-box (box <box>) (n <number>) (x-or-y <symbol>))
   (define first-box (shallow-clone box))

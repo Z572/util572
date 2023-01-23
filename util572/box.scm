@@ -5,6 +5,8 @@
   #:use-module (ice-9 format)
   #:use-module (srfi srfi-26)
   #:use-module (oop goops)
+  #:use-module (util572 point)
+  #:duplicates (merge-accessors merge-generics replace warn-override-core warn last)
   #:export (<box>
             box-x
             box-y
@@ -12,7 +14,9 @@
             box-height
             box-empty?
             split-box
-            split-box/n))
+            split-box/n
+            box-center
+            box-center-point))
 
 (define-class <box> ()
   (x #:init-value 0 #:init-keyword #:x #:accessor box-x)
@@ -101,3 +105,21 @@
 ;; (define-method (split-box/fraction (box <box>) (n <fraction>) (x-or-y <symbol>))
 ;;   (define is-x? (eq? x-or-y 'x))
 ;;   (split-box box (round (* n ((if is-x? box-height box-width) box))) x-or-y))
+
+(define-method (box-center (box <box>))
+  (cons (+ (box-x box ) (/ (box-width box) 2))
+        (+ (box-y box ) (/ (box-height box) 2))))
+
+(define-method ((setter box-center) (box <box>) (p <pair>))
+  (set! (box-x box) (- (car p) (/ (box-width box) 2)))
+  (set! (box-y box) (- (cdr p) (/ (box-height box) 2))))
+
+(define-method (box-center-point (box <box>))
+  (let ((p (box-center box)))
+    (make <point>
+      #:x (car p)
+      #:y (cdr p))))
+
+(define-method ((setter box-center-point) (box <box>) (point <point>))
+  (set! (box-x box) (- (point-x point ) (/ (box-width box) 2)))
+  (set! (box-y box) (- (point-y point ) (/ (box-height box) 2))))

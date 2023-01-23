@@ -41,6 +41,7 @@ SUFFIXES = .scm .go
 SOURCES = util572.scm \
 		util572/box.scm \
 		util572/check.scm \
+		util572/point.scm \
 		util572/color.scm \
 		util572/ffi-helpers.scm \
 		util572/string.scm

@@ -10,6 +10,10 @@
   #:export (<box>
             box-x
             box-y
+            box-left
+            box-right
+            box-top
+            box-bottom
             box-width
             box-height
             box-empty?
@@ -39,6 +43,15 @@
   (if (< i 0)
       (error "<box>' height must >= 0")
       (next-method)))
+
+(define box-left box-x)
+(define box-top box-y)
+
+(define-method (box-right (box <box>))
+  (+ (box-left box) (box-width box)))
+
+(define-method (box-bottom (box <box>))
+  (+ (box-top box) (box-height box)))
 
 (define-method (equal? (box <box>) (box2 <box>))
   (and (= (box-x box) (box-x box2))
@@ -72,7 +85,7 @@
        (error "n must <= (box-height box)"))
      (set! (box-height first-box) n)
 
-     (set! (box-y last-box) (+ (box-y box) n))
+     (set! (box-top last-box) (+ (box-top box) n))
      (set! (box-height last-box) (- (box-height box) n)))
     ((y)
 ;;;  _____      __|__
@@ -84,7 +97,7 @@
        (error "n must <= (box-width box)"))
      (set! (box-width first-box) n)
 
-     (set! (box-x last-box) (+ n (box-x box)))
+     (set! (box-left last-box) (+ n (box-left box)))
      (set! (box-width last-box) (- (box-width box) n)))
     (else (error "X-OR-Y arg must 'x or 'y")))
   (list first-box last-box))
@@ -107,12 +120,12 @@
 ;;   (split-box box (round (* n ((if is-x? box-height box-width) box))) x-or-y))
 
 (define-method (box-center (box <box>))
-  (cons (+ (box-x box ) (/ (box-width box) 2))
-        (+ (box-y box ) (/ (box-height box) 2))))
+  (cons (+ (box-left box ) (/ (box-width box) 2))
+        (+ (box-top box ) (/ (box-height box) 2))))
 
 (define-method ((setter box-center) (box <box>) (p <pair>))
-  (set! (box-x box) (- (car p) (/ (box-width box) 2)))
-  (set! (box-y box) (- (cdr p) (/ (box-height box) 2))))
+  (set! (box-left box) (- (car p) (/ (box-width box) 2)))
+  (set! (box-top box) (- (cdr p) (/ (box-height box) 2))))
 
 (define-method (box-center-point (box <box>))
   (let ((p (box-center box)))
@@ -121,5 +134,5 @@
       #:y (cdr p))))
 
 (define-method ((setter box-center-point) (box <box>) (point <point>))
-  (set! (box-x box) (- (point-x point ) (/ (box-width box) 2)))
-  (set! (box-y box) (- (point-y point ) (/ (box-height box) 2))))
+  (set! (box-left box) (- (point-x point ) (/ (box-width box) 2)))
+  (set! (box-top box) (- (point-y point ) (/ (box-height box) 2))))

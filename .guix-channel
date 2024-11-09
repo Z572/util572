@@ -1,0 +1,9 @@
+(channel
+ (version 0)
+ (url "https://github.com/Z572/util572")
+ (directory ".guix/modules"))
+
+
+;; Local Variables:
+;; mode: lisp
+;; End:

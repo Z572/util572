@@ -1,71 +1,66 @@
-;;; Copyright (C) 2022 Zheng Junjie <873216071@qq.com>
+;;; Copyright (C) 2022, 2025 Zheng Junjie <z572@z572.online>
 (define-module (util572 check)
   #:use-module (srfi srfi-34)
   #:use-module (srfi srfi-35)
-  #:export (do-check?
-            &check-error
+  #:use-module ((system syntax)
+                #:select (syntax-locally-bound-identifiers
+                          syntax-module))
+  #:export (&check-error
             check-error?
             check-error-checker
             check-error-value
+            check-error-locally-bound-identifiers
             check-error-source
             check-error-file-name
             check-error-message
             check-error-line
             check-error-column
-            call-with-check
-            call-with-not-check)
-  #:export-syntax (with-check
-                   with-not-check
-                   define-check))
+            define-check))
 
-(define do-check? (make-parameter #t))
 (define-condition-type &check-error &message
   check-error?
   (checker check-error-checker)
-  (value check-error-value)
+  (module check-error-module)
   (source check-error-source)
-  (filename check-error-file-name)
-  (line check-error-line)
-  (column check-error-column))
+  (value check-error-value)
+  (locally-bound-identifiers check-error-locally-bound-identifiers))
+
+(define (check-error-file-name check-error)
+  (assoc-ref (check-error-source check-error) 'filename))
+
+(define (check-error-line check-error)
+  (assoc-ref (check-error-source check-error) 'line))
+
+(define (check-error-column check-error)
+  (assoc-ref (check-error-source check-error) 'column))
 
 (define check-error-message condition-message)
 
 (define-syntax define-check
-  (lambda (x)
-    (syntax-case x ()
-      ((_ name proc message*)
-       #'(define-syntax name
-           (lambda (y)
-             (syntax-case y ()
-               ((_ obj)
-                (with-syntax ((obje #`'#,(datum->syntax
-                                          y (syntax-source #'obj))))
-                  #`(if (do-check?)
-                        (let* ((location obje)
-                               (filename (assoc-ref location 'filename))
-                               (line (assoc-ref location 'line))
-                               (column (assoc-ref location 'column)))
-                          (or (and (proc obj) obj)
-                              (raise (condition
-                                      (&check-error
-                                       (checker (quote name))
-                                       (value obj)
-                                       (source (quote obj))
-                                       (filename filename)
-                                       (line (1+ line))
-                                       (column column)
-                                       (message message*))))))
-                        obj))))))))))
-(define-syntax-rule (with-check body ...)
-  (parameterize ((do-check? #t))
-    body ...))
-
-(define (call-with-check proc)
-  (with-check (proc)))
-
-(define-syntax-rule (with-not-check body ...)
-  (parameterize ((do-check? #f))
-    body ...))
-
-(define (call-with-not-check proc)
-  (with-not-check (proc)))
+  (syntax-rules ()
+    ((_ check-name proc
+        #:message message*)
+     (define-syntax check-name
+       (lambda (y)
+         (syntax-case y ()
+           ((name obj #:message msg)
+            (and (identifier? #'obj)
+                 (string? (syntax->datum #'msg)))
+            (let ((source (syntax-source y))
+                  (module (syntax-module #'name))
+                  (ides (syntax-locally-bound-identifiers #'name)))
+              #`(let ((object obj))
+                  (or (proc object)
+                      (raise (condition
+                              (&check-error
+                               (checker (quote name))
+                               (value object)
+                               (source (quote #,(datum->syntax y source)))
+                               (module (quote #,(datum->syntax #'name module)))
+                               (locally-bound-identifiers
+                                `(#,@(map (lambda (id) #`(#,id . ,#,id)) ides)))
+                               (message msg))))))))
+           ((name obj)
+            #`(name obj #:message message*))))))
+    ((define-check check-name proc message*)
+     (define-check check-name proc #:message message*))))

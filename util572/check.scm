@@ -4,6 +4,7 @@
   #:use-module (srfi srfi-35)
   #:use-module ((system syntax)
                 #:select (syntax-locally-bound-identifiers
+                          syntax-local-binding
                           syntax-module))
   #:export (&check-error
             check-error?
@@ -48,7 +49,10 @@
                  (string? (syntax->datum #'msg)))
             (let ((source (syntax-source y))
                   (module (syntax-module #'name))
-                  (ides (syntax-locally-bound-identifiers #'name)))
+                  (ides (filter
+                         (lambda (x)
+                           (member (syntax-local-binding x) '(lexical global)))
+                         (syntax-locally-bound-identifiers #'name))))
               #`(let ((object obj))
                   (or (proc object)
                       (raise (condition
